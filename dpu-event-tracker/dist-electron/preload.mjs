@@ -17,6 +17,13 @@ electron.contextBridge.exposeInMainWorld("ipcRenderer", {
     const [channel, ...omit] = args;
     return electron.ipcRenderer.invoke(channel, ...omit);
   }
-  // You can expose other APTs you need here.
-  // ...
+});
+electron.contextBridge.exposeInMainWorld("electronAPI", {
+  db: {
+    isConfigured: () => electron.ipcRenderer.invoke("db:isConfigured"),
+    promptForFile: () => electron.ipcRenderer.invoke("db:promptForFile"),
+    reset: () => electron.ipcRenderer.invoke("db:reset"),
+    getAllStudents: () => electron.ipcRenderer.invoke("db:getAllStudents"),
+    searchStudents: (searchTerm) => electron.ipcRenderer.invoke("db:searchStudents", searchTerm)
+  }
 });

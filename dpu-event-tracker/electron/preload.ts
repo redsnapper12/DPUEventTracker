@@ -18,7 +18,15 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
     const [channel, ...omit] = args
     return ipcRenderer.invoke(channel, ...omit)
   },
-
-  // You can expose other APTs you need here.
-  // ...
 })
+
+// Database API
+contextBridge.exposeInMainWorld('electronAPI', {
+  db: {
+    isConfigured: () => ipcRenderer.invoke('db:isConfigured'),
+    promptForFile: () => ipcRenderer.invoke('db:promptForFile'),
+    reset: () => ipcRenderer.invoke('db:reset'),
+    getAllStudents: () => ipcRenderer.invoke('db:getAllStudents'),
+    searchStudents: (searchTerm: string) => ipcRenderer.invoke('db:searchStudents', searchTerm),
+  },
+});
