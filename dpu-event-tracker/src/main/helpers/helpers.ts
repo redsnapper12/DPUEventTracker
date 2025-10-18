@@ -11,7 +11,10 @@ export enum ClassName {
   Unknown = "Unknown",
 }
 
-export function GetClassNameByYear(class_year: string, currentDate: Date = new Date()): ClassName {
+export function GetClassNameByYear(
+  class_year: string,
+  currentDate: Date = new Date()
+): ClassName {
   const currentYear: number = currentDate.getFullYear();
   const currentMonth: number = currentDate.getMonth() + 1;
 
@@ -35,21 +38,14 @@ export function GetClassNameByYear(class_year: string, currentDate: Date = new D
   }
 }
 
-export function GetStudentClassCount(students: Student[]) {
-    let count: Map<ClassName, number> = new Map([
-        [ClassName.Senior, 0],
-        [ClassName.Junior, 0],
-        [ClassName.Sophomore, 0],
-        [ClassName.Freshman, 0],
-        [ClassName.Unknown, 0],
-    ]);
+export function GetClassCount(students: Student[], className: ClassName) {
+  let count = 0;
 
-    students.forEach(element => {
-        let year = GetClassNameByYear(element.classYear);
-        let prevCount = count.get(year);
+  students.forEach((element) => {
+    let year = GetClassNameByYear(element.classYear);
 
-        if (prevCount != undefined) count.set(year, prevCount + 1);
-    });
+    if (year == className) count++;
+  });
 
-    return count;
+  return count;
 }

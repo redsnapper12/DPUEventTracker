@@ -1,12 +1,12 @@
-import { ipcMain } from 'electron';
-import * as db from './database';
+import { ipcMain } from "electron";
+import * as db from "./database";
 
 export function registerIpcHandlers() {
-  ipcMain.handle('db:isConfigured', async () => {
+  ipcMain.handle("db:isConfigured", async () => {
     return { success: true, data: db.isDatabaseConfigured() };
   });
 
-  ipcMain.handle('db:promptForFile', async () => {
+  ipcMain.handle("db:promptForFile", async () => {
     const result = await db.promptForDatabaseFile();
     if (result) {
       db.initDatabase();
@@ -14,12 +14,12 @@ export function registerIpcHandlers() {
     return { success: result };
   });
 
-  ipcMain.handle('db:reset', async () => {
+  ipcMain.handle("db:reset", async () => {
     db.resetDatabaseConfig();
     return { success: true };
   });
 
-  ipcMain.handle('db:getAllStudents', async () => {
+  ipcMain.handle("db:getAllStudents", async () => {
     try {
       return { success: true, data: db.getAllStudents() };
     } catch (error) {
@@ -27,7 +27,7 @@ export function registerIpcHandlers() {
     }
   });
 
-  ipcMain.handle('db:searchStudents', async (_event, searchTerm: string) => {
+  ipcMain.handle("db:searchStudents", async (_event, searchTerm: string) => {
     try {
       return { success: true, data: db.searchStudents(searchTerm) };
     } catch (error) {

@@ -1,72 +1,88 @@
-import { app, BrowserWindow } from 'electron'
-import { createRequire } from 'node:module'
-import { fileURLToPath } from 'node:url'
-import { initDatabase, isDatabaseConfigured, closeDatabase } from '../src/main/database';
-import { registerIpcHandlers } from '../src/main/ipcHandlers';
-import path from 'node:path'
+import { app, BrowserWindow } from "electron";
+import { createRequire } from "node:module";
+import { fileURLToPath } from "node:url";
+import {
+  initDatabase,
+  isDatabaseConfigured,
+  closeDatabase,
+} from "../src/main/database";
+import { registerIpcHandlers } from "../src/main/ipcHandlers";
+import path from "node:path";
 
-const require = createRequire(import.meta.url)
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const require = createRequire(import.meta.url);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-process.env.APP_ROOT = path.join(__dirname, '..')
+process.env.APP_ROOT = path.join(__dirname, "..");
 
-export const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL']
-export const MAIN_DIST = path.join(process.env.APP_ROOT, 'dist-electron')
-export const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist')
+export const VITE_DEV_SERVER_URL = process.env["VITE_DEV_SERVER_URL"];
+export const MAIN_DIST = path.join(process.env.APP_ROOT, "dist-electron");
+export const RENDERER_DIST = path.join(process.env.APP_ROOT, "dist");
 
-process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 'public') : RENDERER_DIST
+process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
+  ? path.join(process.env.APP_ROOT, "public")
+  : RENDERER_DIST;
 
-let win: BrowserWindow | null
+let win: BrowserWindow | null;
+
+const BROWSER_WINDOW_WIDTH: number = 1280;
+const BROWSER_WINDOW_HEIGHT: number = 720;
 
 function createWindow() {
   win = new BrowserWindow({
-    icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
+    icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
+    width: BROWSER_WINDOW_WIDTH,
+    height: BROWSER_WINDOW_HEIGHT,
+    minWidth: BROWSER_WINDOW_WIDTH / 2,
+    minHeight: BROWSER_WINDOW_HEIGHT / 2,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.mjs'),
+      preload: path.join(__dirname, "preload.mjs"),
       nodeIntegration: false,
       contextIsolation: true,
     },
-  })
+  });
 
   if (VITE_DEV_SERVER_URL) {
-    win.loadURL(VITE_DEV_SERVER_URL)
+    win.loadURL(VITE_DEV_SERVER_URL);
   } else {
-    win.loadFile(path.join(RENDERER_DIST, 'index.html'))
+    win.loadFile(path.join(RENDERER_DIST, "index.html"));
   }
 }
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-    win = null
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
+    app.quit();
+    win = null;
   }
-})
-
-app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow()
-  }
-})
-
-app.whenReady().then(() => {
-  try {
-    // Register IPC handlers
-    registerIpcHandlers();
-    
-    // Try to load database if already configured (optional)
-    if (isDatabaseConfigured()) {
-      initDatabase();
-    }
-    
-    // Create window
-    createWindow();
-  } catch (error) {
-    console.error('Error during app initialization:', error);
-  }
-}).catch(error => {
-  console.error('Error in app.whenReady:', error);
 });
 
-app.on('before-quit', () => {
+app.on("activate", () => {
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow();
+  }
+});
+
+app
+  .whenReady()
+  .then(() => {
+    try {
+      // Register IPC handlers
+      registerIpcHandlers();
+
+      // Try to load database if already configured (optional)
+      if (isDatabaseConfigured()) {
+        initDatabase();
+      }
+
+      // Create window
+      createWindow();
+    } catch (error) {
+      console.error("Error during app initialization:", error);
+    }
+  })
+  .catch((error) => {
+    console.error("Error in app.whenReady:", error);
+  });
+
+app.on("before-quit", () => {
   closeDatabase();
 });

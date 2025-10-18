@@ -47,9 +47,7 @@ async function promptForDatabaseFile() {
     });
     console.log("Database opened successfully");
     console.log("Querying tables...");
-    const allTables = testDb.prepare(
-      "SELECT * FROM sqlite_master WHERE type='table'"
-    ).all();
+    const allTables = testDb.prepare("SELECT * FROM sqlite_master WHERE type='table'").all();
     console.log("=== DATABASE DEBUG ===");
     console.log("All tables:", allTables);
     console.log("Attempting to query students table...");
@@ -61,7 +59,10 @@ async function promptForDatabaseFile() {
     testDb.close();
     console.log("Saving database config...");
     const configPath = path.join(app.getPath("userData"), "db-config.json");
-    fs.writeFileSync(configPath, JSON.stringify({ databasePath: selectedPath }));
+    fs.writeFileSync(
+      configPath,
+      JSON.stringify({ databasePath: selectedPath })
+    );
     console.log("✅ Database configured successfully:", selectedPath);
     return true;
   } catch (error) {
@@ -103,7 +104,9 @@ function resetDatabaseConfig() {
   }
 }
 function getAllStudents() {
-  const stmt = getDatabase().prepare("SELECT * FROM students ORDER BY last_name, first_name");
+  const stmt = getDatabase().prepare(
+    "SELECT * FROM students ORDER BY last_name, first_name"
+  );
   const results = stmt.all();
   return toCamelCaseArray(results);
 }
@@ -157,9 +160,15 @@ const MAIN_DIST = path.join(process.env.APP_ROOT, "dist-electron");
 const RENDERER_DIST = path.join(process.env.APP_ROOT, "dist");
 process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, "public") : RENDERER_DIST;
 let win;
+const BROWSER_WINDOW_WIDTH = 1280;
+const BROWSER_WINDOW_HEIGHT = 720;
 function createWindow() {
   win = new BrowserWindow({
     icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
+    width: BROWSER_WINDOW_WIDTH,
+    height: BROWSER_WINDOW_HEIGHT,
+    minWidth: BROWSER_WINDOW_WIDTH / 2,
+    minHeight: BROWSER_WINDOW_HEIGHT / 2,
     webPreferences: {
       preload: path.join(__dirname, "preload.mjs"),
       nodeIntegration: false,

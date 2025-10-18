@@ -1,17 +1,18 @@
-import type { Student } from '../types/electron';
+import type { Student } from "../types/electron";
 
-interface CheckInColumnProps {
+interface CheckInProps {
   students: Student[];
   onCheckOut: (studentId: number) => void;
 }
 
-export default function CheckIn({ students, onCheckOut }: CheckInColumnProps) {
+export default function CheckIn({ students, onCheckOut }: CheckInProps) {
   return (
-    <div className="h-full bg-neutral-700 rounded-lg p-4 flex flex-col">
-      <h1 className="text-white text-2xl font-bold mb-4">
-        Checked In ({students.length})
-      </h1>
-  
+    <div className="h-full bg-neutral-700 rounded-lg flex flex-col overflow-hidden">
+      <div className="flex justify-between items-center bg-neutral-600 px-4 py-4 mb-4">
+        <h1 className="text-white text-2xl font-bold">Checked In</h1>
+        <h1 className="text-white text-2xl font-bold">[{students.length}]</h1>
+      </div>
+
       <div className="flex-1 overflow-y-auto space-y-2">
         {students.length === 0 ? (
           <div className="text-gray-400 text-center py-8">
@@ -21,7 +22,7 @@ export default function CheckIn({ students, onCheckOut }: CheckInColumnProps) {
           students.map((student) => (
             <div
               key={student.id}
-              className="bg-green-900/30 border border-green-600 p-3 rounded"
+              className="border border-purple-600 bg-neutral-600 p-3 m-3 rounded hover:bg-neutral-500 transition-colors"
             >
               <div className="flex justify-between items-start">
                 <div>
@@ -39,7 +40,7 @@ export default function CheckIn({ students, onCheckOut }: CheckInColumnProps) {
                 </div>
                 <button
                   onClick={() => onCheckOut(student.id)}
-                  className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
+                  className="secondary-button"
                 >
                   Check Out
                 </button>
