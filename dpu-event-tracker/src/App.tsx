@@ -1,4 +1,3 @@
-// src/App.tsx
 import { useState, useEffect } from "react";
 import type { Student } from "./types/electron";
 import "./styles/globals.css";
@@ -49,7 +48,7 @@ function App() {
   );
 
   return (
-    <div className="bg-neutral-800 grid grid-cols-2 h-screen w-screen p-3 gap-3">
+    <div className="bg-neutral-900 grid grid-cols-2 h-screen w-screen p-3 gap-3">
       <div className="flex flex-col gap-3 min-h-0">
         <div className="flex-1 min-h-0">
           <CheckIn

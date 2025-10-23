@@ -2,10 +2,11 @@ export interface Student {
   id: number;
   firstName: string;
   lastName: string;
+  preferredName: string,
   phoneNumber: string;
   email: string;
   classYear: string;
-  tag: "Caution" | "Safe" | "Blacklisted" | null;
+  tag: "Banned" | "Underaged" | "Greek President" | null;
 }
 
 declare global {

@@ -49,3 +49,7 @@ export function GetClassCount(students: Student[], className: ClassName) {
 
   return count;
 }
+
+export function HasPreferredName(student: Student) {
+  return student.preferredName != "N/A";
+}

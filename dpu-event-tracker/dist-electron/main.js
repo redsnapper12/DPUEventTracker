@@ -11,11 +11,11 @@ function toCamelCase(row) {
     id: row.id,
     firstName: row.first_name,
     lastName: row.last_name,
+    preferredName: row.preferred_name,
     phoneNumber: row.phone_number,
     email: row.email,
     classYear: row.class_year,
-    tag: row.tag,
-    createdAt: row.created_at
+    tag: row.tag
   };
 }
 function toCamelCaseArray(rows) {
@@ -34,41 +34,27 @@ async function promptForDatabaseFile() {
     ]
   });
   if (result.canceled || result.filePaths.length === 0) {
-    console.log("User canceled database selection");
     return false;
   }
   const selectedPath = result.filePaths[0];
-  console.log("Selected database path:", selectedPath);
   try {
-    console.log("Attempting to open database...");
     const testDb = new Database(selectedPath, {
       readonly: true,
       fileMustExist: true
     });
-    console.log("Database opened successfully");
-    console.log("Querying tables...");
-    const allTables = testDb.prepare("SELECT * FROM sqlite_master WHERE type='table'").all();
-    console.log("=== DATABASE DEBUG ===");
-    console.log("All tables:", allTables);
-    console.log("Attempting to query students table...");
-    const studentCount = testDb.prepare("SELECT COUNT(*) as count FROM students").get();
-    console.log("Student count:", studentCount);
-    const sampleStudent = testDb.prepare("SELECT * FROM students LIMIT 1").get();
-    console.log("Sample student:", sampleStudent);
-    console.log("Closing test database...");
+    testDb.prepare("SELECT COUNT(*) FROM students").get();
     testDb.close();
-    console.log("Saving database config...");
     const configPath = path.join(app.getPath("userData"), "db-config.json");
     fs.writeFileSync(
       configPath,
       JSON.stringify({ databasePath: selectedPath })
     );
-    console.log("✅ Database configured successfully:", selectedPath);
     return true;
   } catch (error) {
-    console.error("❌ DATABASE ERROR:", error);
-    console.error("Error stack:", error.stack);
-    dialog.showErrorBox("Database Error", `${error.message}`);
+    dialog.showErrorBox(
+      "Database Error",
+      `Failed to open database: ${error.message}`
+    );
     return false;
   }
 }

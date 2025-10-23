@@ -11,8 +11,8 @@ export default function EventInfo({
   students,
 }: EventInfoColumnProps) {
   return (
-    <div className="h-full bg-neutral-700 rounded-lg flex flex-col overflow-hidden">
-      <div className="bg-neutral-600 px-4 py-3 flex justify-between items-center">
+    <div className="h-full bg-neutral-800 rounded-lg flex flex-col overflow-clip">
+      <div className="bg-neutral-700 px-4 py-3 flex justify-between items-center">
         <h1 className="text-white text-2xl font-bold">Event Info</h1>
         <div className="flex gap-2">
           <button className="primary-button">Save</button>
@@ -20,34 +20,64 @@ export default function EventInfo({
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4">
-        <div className="grid grid-cols-3 gap-2">
-          {/* Checked In */}
-          <div className="bg-purple-900/30 border border-purple-600 rounded-lg p-4">
-            <div className="text-purple-300 text-sm">Checked In</div>
-            <div className="text-white text-3xl font-bold">
-              {checkedInCount}
-            </div>
-          </div>
-
-          {/* Class Count*/}
-          <div className="bg-neutral-600 rounded-lg p-4">
-            <div className="text-gray-400 text-sm">Class Count</div>
-            <ul className="text-white text-lg">
-              <li>Seniors: {GetClassCount(students, ClassName.Senior)}</li>
-              <li>Juniors: {GetClassCount(students, ClassName.Junior)}</li>
-              <li>Sophomores: {GetClassCount(students, ClassName.Sophomore)}</li>
-              <li>Freshmen: {GetClassCount(students, ClassName.Freshman)}</li>
-            </ul>
-          </div>
-
-          {/* Current Time */}
-          <div className="bg-neutral-600 rounded-lg p-4">
-            <div className="text-gray-400 text-sm">Current Time</div>
-            <div className="text-white text-lg">
-              {new Date().toLocaleTimeString()}
-            </div>
-          </div>
+      {/* Class Count */}
+      <div className="m-5 bg-neutral-700 rounded-lg p-4">
+        <div className="text-gray-400 text-sm mb-3">Class Count</div>
+        <div className="space-y-2">
+          {[
+            {
+              label: "Seniors",
+              class: ClassName.Senior,
+              color: "bg-blue-600",
+            },
+            {
+              label: "Juniors",
+              class: ClassName.Junior,
+              color: "bg-blue-500",
+            },
+            {
+              label: "Sophomores",
+              class: ClassName.Sophomore,
+              color: "bg-blue-400",
+            },
+            {
+              label: "Freshmen",
+              class: ClassName.Freshman,
+              color: "bg-blue-300",
+            },
+            {
+              label: "Unknown",
+              class: ClassName.Unknown,
+              color: "bg-gray-500",
+            },
+          ].map(({ label, class: className, color }) => {
+            const count = GetClassCount(students, className);
+            const maxCount = Math.max(
+              GetClassCount(students, ClassName.Senior),
+              GetClassCount(students, ClassName.Junior),
+              GetClassCount(students, ClassName.Sophomore),
+              GetClassCount(students, ClassName.Freshman),
+              GetClassCount(students, ClassName.Unknown),
+              1 // Avoid division by zero
+            );
+            const percentage = (count / maxCount) * 100;
+            return (
+              <div key={label}>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-white text-sm font-medium">
+                    {label}
+                  </span>
+                  <span className="text-gray-300 text-sm">{count}</span>
+                </div>
+                <div className="w-full bg-neutral-800 rounded-full h-2">
+                  <div
+                    className={`${color} h-2 rounded-full transition-all duration-500`}
+                    style={{ width: `${percentage}%` }}
+                  ></div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
